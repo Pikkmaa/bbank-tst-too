@@ -1,19 +1,22 @@
-name: Playwright Tests and Pages Deploy
+name: Playwright Tests and Report Deploy
 
 on:
   push:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  test-and-deploy:
-    name: Run Tests and Publish Docs
+  test:
     runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.export.outputs.artifact-name }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -27,8 +30,30 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run UI tests
-        run: npm run test:ui
+      - name: Run Playwright tests
+        run: npx playwright test
 
-      - name: Run API tests
-        run: npm run test:api
+      - name: Export HTML report
+        id: export
+        run: |
+          mkdir -p playwright-report
+          cp -r ./playwright-report/* ./playwright-report/  # if needed
+          echo "artifact-name=github-pages" >> $GITHUB_OUTPUT
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./playwright-report
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    name: Deploy report to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
