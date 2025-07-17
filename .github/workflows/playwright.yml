@@ -1,17 +1,16 @@
-name: Playwright Tests
+name: Playwright Tests and Pages Deploy
+
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-jobs:
-  test:
-    name: Run UI and API tests
-    runs-on: ubuntu-latest
+    branches: [main]
 
-    strategy:
-      matrix:
-        project: [api, ui]  # run each as a separate job for parallelism
+permissions:
+  contents: write
+
+jobs:
+  test-and-deploy:
+    name: Run Tests and Publish Docs
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -25,16 +24,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers (UI tests only)
-        if: matrix.project == 'ui'
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests - ${{ matrix.project }}
-        run: npx playwright test --project=${{ matrix.project }}
+      - name: Run all tests (UI + API)
+        run: npx playwright test
 
-      - name: Upload HTML Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-${{ matrix.project }}
-          path: playwright-report
+      - name: Commit and push HTML report to /docs
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add docs
+          git commit -m "Update Playwright report [ci skip]" || echo "No changes to commit"
+          git push
