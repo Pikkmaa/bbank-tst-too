@@ -22,7 +22,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['html', { outputFolder: 'docs', open: 'never' }]],
+  reporter: [['html', { outputFolder: 'playwright-report' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -35,16 +35,14 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'API',
-      testMatch: /.*api\/.*\.spec\.ts/,
-      use: {
-        baseURL: 'https://taotlus.bigbank.ee/api/v1',
-      },
+      name: 'UI - Chromium',
+      use: { browserName: 'chromium' },
+      testMatch: /.*\.ui\.spec\.ts/,
     },
     {
-      name: 'ui',
-      testMatch: /.*ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Chrome'] },
+      name: 'API Tests',
+      use: {}, // no browser needed
+      testMatch: /.*\.api\.spec\.ts/,
     },
     {
       name: 'chromium',
