@@ -40,11 +40,21 @@ export default defineConfig({
       testMatch: /.*\.ui\.spec\.ts/,
     },
     {
-      name: 'API Tests',
-      use: {}, // no browser needed
-      testMatch: /.*\.api\.spec\.ts/,
+      name: 'UI - Firefox',
+      use: { browserName: 'firefox' },
+      testMatch: /.*\.ui\.spec\.ts/,
     },
     {
+      name: 'UI - Webkit',
+      use: { browserName: 'webkit' },
+      testMatch: /.*\.ui\.spec\.ts/,
+    },
+    {
+      name: 'API Tests',
+      use: {},
+      testMatch: /.*\.api\.spec\.ts/,
+    },
+/*     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
@@ -57,7 +67,7 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    },
+    }, */
 
     /* Test against mobile viewports. */
     // {
