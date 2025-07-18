@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Loan Calculator Tests
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   run-tests:
-    name: Run Playwright UI and API tests
+    name: Run Loan Calculator UI and API tests
     runs-on: ubuntu-latest
 
     steps:
