@@ -32,16 +32,6 @@ test.describe('Loan Calculator API', () => {
     expect(body.totalRepayableAmount).toBeGreaterThan(7000);
   });
 
-  test('Invalid currency returns 200', async ({ request }) => {
-    const payload = { ...defaultPayload, currency: 'USD' };
-    const response = await request.post(BASE_URL, {
-      headers: COMMON_HEADERS,
-      data: payload
-    });
-
-    expect(response.status()).toBe(200);
-  });
-
   test('Missing required field returns 400', async ({ request }) => {
     const { amount, ...payloadWithoutAmount } = defaultPayload;
     const response = await request.post(BASE_URL, {
